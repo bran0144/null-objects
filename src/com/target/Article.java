@@ -1,3 +1,5 @@
+package com.target;
+
 public class Article {
     private Warranty moneyBackGuarantee;
     private Warranty expressWarranty;
