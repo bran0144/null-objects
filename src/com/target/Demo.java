@@ -5,15 +5,17 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class Demo {
+    private void offerMoneyBack() {
+        System.out.println("Offer money back.");
+    }
+    public void offerRepair() {
+        System.out.println("Offer repair.");
+    }
     public void claimWarranty(Article article) {
         LocalDate today = LocalDate.now();
 
-        if (article.getMoneyBackGuarantee().isValidOn(today)) {
-            System.out.println("Offer money back");
-        }
-        if (article.getExpressWarranty().isValidOn(today)) {
-            System.out.println("Offer repair");
-        }
+        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+        article.getExpressWarranty().on(today).claim(this::offerRepair);
     }
 
     public void run() {
