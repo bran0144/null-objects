@@ -17,16 +17,30 @@ public class Demo {
     public void claimWarranty(Article article, DeviceStatus status) {
         LocalDate today = LocalDate.now();
 
-    if (status == DeviceStatus.NOT_OPERATIONAL) {
-        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-        article.getExpressWarranty().on(today).claim(this::offerRepair);
-    }else if (status == DeviceStatus.VISIBLY_DAMAGED) {
-    }else if (status == DeviceStatus.SENSOR_FAILED){
-        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-        article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-    }else {
-        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-    }
+        switch (status) {
+            case ALL_FINE:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                break;
+            case NOT_OPERATIONAL:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                article.getExpressWarranty().on(today).claim(this::offerRepair);
+                break;
+            case VISIBLY_DAMAGED:
+                break;
+            case SENSOR_FAILED:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+                break;
+//    if (status == DeviceStatus.NOT_OPERATIONAL) {
+//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+//        article.getExpressWarranty().on(today).claim(this::offerRepair);
+//    }else if (status == DeviceStatus.VISIBLY_DAMAGED) {
+//    }else if (status == DeviceStatus.SENSOR_FAILED){
+//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+//        article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+//    }else {
+//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+//    }
     }
 
     public void run() {
