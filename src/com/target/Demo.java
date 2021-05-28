@@ -14,8 +14,24 @@ public class Demo {
     public void offerSensorRepair() {
         System.out.println("Offer sensor replacement.");
     }
-    public void claimWarranty(Article article) {
+    public void claimWarranty(Article article, DeviceStatus status) {
         LocalDate today = LocalDate.now();
+
+        switch (status) {
+            case ALL_FINE:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                break;
+            case NOT_OPERATIONAL:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                article.getExpressWarranty().on(today).claim(this::offerRepair);
+                break;
+            case VISIBLY_DAMAGED:
+                break;
+            case SENSOR_FAILED:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+                break;
+        }
         article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
         article.getExpressWarranty().on(today).claim(this::offerRepair);
         article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
@@ -30,14 +46,11 @@ public class Demo {
         Warranty sensorWarranty = new TimeLimitedWarranty(sellingDate, Duration.ofDays(90));
         Article item1 = new Article(moneyback1, warranty1).install(sensor, sensorWarranty);
 
-        this.claimWarranty(item1);
-        this.claimWarranty(item1.withVisibleDamage());
-        this.claimWarranty(item1.nonOperational().withVisibleDamage());
-        this.claimWarranty(item1.nonOperational());
+        this.claimWarranty(item1, DeviceStatus.ALL_FINE);
+        this.claimWarranty(item1, DeviceStatus.VISIBLY_DAMAGED);
+        this.claimWarranty(item1, DeviceStatus.NOT_OPERATIONAL);
+        this.claimWarranty(item1, DeviceStatus.SENSOR_FAILED);
 
-        LocalDate sensorExamined = LocalDate.now().minus(2, ChronoUnit.DAYS);
-        this.claimWarranty(item1.sensorNotOperational(sensorExamined));
-        this.claimWarranty(item1.nonOperational().sensorNotOperational(sensorExamined));
 
     }
 }
