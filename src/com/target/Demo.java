@@ -31,6 +31,21 @@ public class Demo {
                 article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
                 article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
                 break;
+            case NOT_OPERATIONAL_DAMAGED:
+                article.getExpressWarranty().on(today).claim(this::offerRepair);
+                break;
+            case NOT_OPERATIONAL_SENSOR_FAILED:
+                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+                article.getExpressWarranty().on(today).claim(this::offerRepair);
+                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+                break;
+            case DAMAGED_SENSOR_FAILED:
+                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+                break;
+            case NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED:
+                article.getExpressWarranty().on(today).claim(this::offerRepair);
+                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
+                break;
 //    if (status == DeviceStatus.NOT_OPERATIONAL) {
 //        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
 //        article.getExpressWarranty().on(today).claim(this::offerRepair);
@@ -41,6 +56,7 @@ public class Demo {
 //    }else {
 //        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
 //    }
+        }
     }
 
     public void run() {
