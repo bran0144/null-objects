@@ -1,5 +1,8 @@
 package com.target;
 
+import com.target.rules.ClaimingRule;
+import com.target.states.DeviceStatus;
+
 import java.util.Optional;
 
 public class StatusEqualityRule implements ClaimingRule, Action{

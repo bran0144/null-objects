@@ -1,8 +1,11 @@
-package com.target;
+package com.target.rules;
+
+import com.target.Action;
+import com.target.states.DeviceStatus;
 
 import java.util.Optional;
 
-public class ChainedRule implements ClaimingRule{
+public class ChainedRule implements ClaimingRule {
     private ClaimingRule head;
     private ClaimingRule tail;
 

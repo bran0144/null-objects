@@ -1,4 +1,7 @@
-package com.target;
+package com.target.rules;
+
+import com.target.Action;
+import com.target.states.DeviceStatus;
 
 import java.util.Optional;
 
