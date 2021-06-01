@@ -4,32 +4,36 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class DeviceStatus {
-    public static final DeviceStatus ALL_FINE = new DeviceStatus(0);
-    public static final DeviceStatus NOT_OPERATIONAL = new DeviceStatus(1);
-    public static final DeviceStatus VISIBLY_DAMAGED = new DeviceStatus(2);
-    public static final DeviceStatus SENSOR_FAILED= new DeviceStatus(4);
-    public static final DeviceStatus NOT_OPERATIONAL_DAMAGED = combine(NOT_OPERATIONAL,  VISIBLY_DAMAGED);
-    public static final DeviceStatus NOT_OPERATIONAL_SENSOR_FAILED = combine(NOT_OPERATIONAL, SENSOR_FAILED);
-    public static final DeviceStatus DAMAGED_SENSOR_FAILED = combine(VISIBLY_DAMAGED, SENSOR_FAILED);
-    public static final DeviceStatus NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED = combine(NOT_OPERATIONAL, VISIBLY_DAMAGED, SENSOR_FAILED);
-
-    private static DeviceStatus combine(DeviceStatus...statuses) {
-        return new DeviceStatus(Arrays.stream(statuses)
-        .mapToInt(status -> status.id)
-        .reduce(0, (a,b) -> a | b));
+    public static DeviceStatus allFine() {
+        return new DeviceStatus(0);
     }
-    private final int id;
-    private DeviceStatus (int id) {
-        this.id = id;
+    public static DeviceStatus notOperational() {
+        return new DeviceStatus(1);
+    }
+    public static DeviceStatus visiblyDamaged() {
+        return new DeviceStatus(2);
+    }
+    public static DeviceStatus sensorFailed() {
+        return new DeviceStatus(4);
+    }
+
+    private final int representation;
+    private DeviceStatus (int representation) {
+        this.representation = representation;
     }
 
     public DeviceStatus add (DeviceStatus status) {
-        return Stream.of(
-                    ALL_FINE, NOT_OPERATIONAL, VISIBLY_DAMAGED, SENSOR_FAILED,
-                    NOT_OPERATIONAL_DAMAGED, NOT_OPERATIONAL_SENSOR_FAILED,
-                    DAMAGED_SENSOR_FAILED, NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED)
-                .filter(val -> val.id == (this.id | status.id))
-                .findFirst()
-                .get();
+        return new DeviceStatus(this.representation | status.representation);
+    }
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof DeviceStatus && this.equals((DeviceStatus) other);
+    }
+    private boolean equals(DeviceStatus other) {
+        return this.representation == other.representation;
+    }
+    @Override
+    public int hashCode() {
+        return this.representation;
     }
 }

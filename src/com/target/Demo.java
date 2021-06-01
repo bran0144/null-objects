@@ -18,24 +18,24 @@ public class Demo {
     public void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
         LocalDate today = LocalDate.now();
 
-        if (status == DeviceStatus.ALL_FINE) {
+        if (status.equals(DeviceStatus.allFine())) {
             this.claimMoneyBack(article, today);
-        } else if (status == DeviceStatus.NOT_OPERATIONAL) {
-            this.claimMoneyBack(article, today);
-            this.claimExpress(article, today);
-        } else if (status == DeviceStatus.VISIBLY_DAMAGED) {
-         }else  if (status == DeviceStatus.SENSOR_FAILED) {
-            this.claimMoneyBack(article, today);
-            this.claimExtended(article, today, sensorFailureDate);
-        } else if (status == DeviceStatus.NOT_OPERATIONAL_DAMAGED) {
-            this.claimExpress(article, today);
-        }else if (status == DeviceStatus.NOT_OPERATIONAL_SENSOR_FAILED) {
+        } else if (status.equals(DeviceStatus.notOperational())) {
             this.claimMoneyBack(article, today);
             this.claimExpress(article, today);
+        } else if (status.equals(DeviceStatus.visiblyDamaged())) {
+         }else  if (status.equals(DeviceStatus.sensorFailed())) {
+            this.claimMoneyBack(article, today);
             this.claimExtended(article, today, sensorFailureDate);
-        } else if (status == DeviceStatus.DAMAGED_SENSOR_FAILED) {
+        } else if (status.equals(DeviceStatus.notOperational().add(DeviceStatus.visiblyDamaged()))) {
+            this.claimExpress(article, today);
+        }else if (status.equals(DeviceStatus.notOperational().add(DeviceStatus.sensorFailed()))) {
+            this.claimMoneyBack(article, today);
+            this.claimExpress(article, today);
             this.claimExtended(article, today, sensorFailureDate);
-        } else if (status == DeviceStatus.NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED) {
+        } else if (status.equals(DeviceStatus.visiblyDamaged().add(DeviceStatus.sensorFailed()))) {
+            this.claimExtended(article, today, sensorFailureDate);
+        } else {
             this.claimExpress(article, today);
             this.claimExtended(article, today, sensorFailureDate);
 
