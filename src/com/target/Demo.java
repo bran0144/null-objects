@@ -18,45 +18,27 @@ public class Demo {
     public void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
         LocalDate today = LocalDate.now();
 
-        switch (status) {
-            case ALL_FINE:
-                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-                break;
-            case NOT_OPERATIONAL:
-                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-                article.getExpressWarranty().on(today).claim(this::offerRepair);
-                break;
-            case VISIBLY_DAMAGED:
-                break;
-            case SENSOR_FAILED:
-                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-                break;
-            case NOT_OPERATIONAL_DAMAGED:
-                article.getExpressWarranty().on(today).claim(this::offerRepair);
-                break;
-            case NOT_OPERATIONAL_SENSOR_FAILED:
-                article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-                article.getExpressWarranty().on(today).claim(this::offerRepair);
-                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-                break;
-            case DAMAGED_SENSOR_FAILED:
-                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-                break;
-            case NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED:
-                article.getExpressWarranty().on(today).claim(this::offerRepair);
-                article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-                break;
-//    if (status == DeviceStatus.NOT_OPERATIONAL) {
-//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-//        article.getExpressWarranty().on(today).claim(this::offerRepair);
-//    }else if (status == DeviceStatus.VISIBLY_DAMAGED) {
-//    }else if (status == DeviceStatus.SENSOR_FAILED){
-//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-//        article.getExtendedWarranty().on(today).claim(this::offerSensorRepair);
-//    }else {
-//        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
-//    }
+        if (status == DeviceStatus.ALL_FINE) {
+            this.claimMoneyBack(article, today);
+        } else if (status == DeviceStatus.NOT_OPERATIONAL) {
+            this.claimMoneyBack(article, today);
+            this.claimExpress(article, today);
+        } else if (status == DeviceStatus.VISIBLY_DAMAGED) {
+         }else  if (status == DeviceStatus.SENSOR_FAILED) {
+            this.claimMoneyBack(article, today);
+            this.claimExtended(article, today, sensorFailureDate);
+        } else if (status == DeviceStatus.NOT_OPERATIONAL_DAMAGED) {
+            this.claimExpress(article, today);
+        }else if (status == DeviceStatus.NOT_OPERATIONAL_SENSOR_FAILED) {
+            this.claimMoneyBack(article, today);
+            this.claimExpress(article, today);
+            this.claimExtended(article, today, sensorFailureDate);
+        } else if (status == DeviceStatus.DAMAGED_SENSOR_FAILED) {
+            this.claimExtended(article, today, sensorFailureDate);
+        } else if (status == DeviceStatus.NOT_OPERATIONAL_DAMAGED_SENSOR_FAILED) {
+            this.claimExpress(article, today);
+            this.claimExtended(article, today, sensorFailureDate);
+
         }
     }
     private void claimExtended(Article article, LocalDate today, Optional<LocalDate> sensorFailureDate) {
