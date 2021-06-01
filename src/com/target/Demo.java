@@ -3,6 +3,7 @@ package com.target;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 public class Demo {
     private void offerMoneyBack() {
@@ -58,6 +59,17 @@ public class Demo {
 //    }
         }
     }
+    private void claimExtended(Article article, LocalDate today, Optional<LocalDate> sensorFailureDate) {
+        sensorFailureDate
+                .flatMap(date -> article.getExtendedWarranty().filter(date))
+                .ifPresent(warranty -> warranty.on(today).claim(this::offerSensorRepair));
+    }
+    private void claimExpress(Article article, LocalDate today) {
+        article.getExpressWarranty().on(today).claim(this::offerRepair);
+    }
+    private void claimMoneyBack(Article article, LocalDate today) {
+        article.getMoneyBackGuarantee().on(today).claim(this::offerMoneyBack);
+    }
 
     public void run() {
         LocalDate sellingDate = LocalDate.now().minus(40, ChronoUnit.DAYS);
@@ -68,10 +80,13 @@ public class Demo {
         Warranty sensorWarranty = new TimeLimitedWarranty(sellingDate, Duration.ofDays(90));
         Article item1 = new Article(moneyback1, warranty1).install(sensor, sensorWarranty);
 
-        this.claimWarranty(item1, DeviceStatus.ALL_FINE);
-        this.claimWarranty(item1, DeviceStatus.VISIBLY_DAMAGED);
-        this.claimWarranty(item1, DeviceStatus.NOT_OPERATIONAL);
-        this.claimWarranty(item1, DeviceStatus.SENSOR_FAILED);
+        this.claimWarranty(item1, DeviceStatus.ALL_FINE, Optional.empty());
+        this.claimWarranty(item1, DeviceStatus.VISIBLY_DAMAGED, Optional.empty());
+        this.claimWarranty(item1, DeviceStatus.NOT_OPERATIONAL, Optional.empty());
+        this.claimWarranty(item1, DeviceStatus.NOT_OPERATIONAL.add(DeviceStatus.VISIBLY_DAMAGED), Optional.empty());
+
+        LocalDate sensorExamined = LocalDate.now().minus(2, ChronoUnit.DAYS);
+        this.claimWarranty(item1, DeviceStatus.SENSOR_FAILED, Optional.of(sensorExamined));
 
 
     }
