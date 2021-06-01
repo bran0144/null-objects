@@ -15,7 +15,7 @@ public class Demo {
     public void offerSensorRepair() {
         System.out.println("Offer sensor replacement.");
     }
-    public void claimWarranty(Article article, DeviceStatus status) {
+    public void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
         LocalDate today = LocalDate.now();
 
         switch (status) {
