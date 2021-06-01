@@ -1,8 +1,6 @@
 package com.target;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class Demo {
@@ -18,11 +16,19 @@ public class Demo {
     public void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
         LocalDate today = LocalDate.now();
 
-        if (status.equals(DeviceStatus.allFine())) {
-            this.claimMoneyBack(article, today);
-        } else if (status.equals(DeviceStatus.notOperational())) {
-            this.claimMoneyBack(article, today);
-            this.claimExpress(article, today);
+        StatusEqualityRule.match(
+                    DeviceStatus.allFine(),
+                    () -> this.claimMoneyBack(article, today))
+                .applicableTo(status)
+                .ifPresent(action -> action.apply());
+
+
+        Runnable allFineAction = () ->
+                this.claimMoneyBack(article, today);
+        Runnable notOperationalAction = () ->
+                this.claimMoneyBack(article, today);
+        this.claimExpress(article, today);
+    };
         } else if (status.equals(DeviceStatus.visiblyDamaged())) {
          }else  if (status.equals(DeviceStatus.sensorFailed())) {
             this.claimMoneyBack(article, today);
