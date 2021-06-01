@@ -1,6 +1,7 @@
 package com.target;
 
 import com.target.rules.ClaimingRule;
+import com.target.rules.ExhaustiveRulesBuilder;
 import com.target.states.DeviceStatus;
 import com.target.states.OperationalStatus;
 
@@ -8,6 +9,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class Demo {
     private void offerMoneyBack() {
@@ -20,8 +22,16 @@ public class Demo {
         System.out.println("Offer sensor replacement.");
     }
 
-   private void claimWarranty(Article article, OperationalStatus status) {
+   private void claimWarranty(Supplier<ClaimingRulesBuilder> rulesBuilderFactory, Article article, OperationalStatus status) {
         LocalDate today = LocalDate.now();
+
+        rulesBuilderFactory.get()
+                .onMoneyBack(s -> this.claimMoneyBack(article, today))
+                .onClaimExpress(s -> this.claimExpress(article, today))
+                .onClaimExtended(s -> this.claimExtended(article, today, s.getFailureDetectedDate()))
+                .build()
+                .applicableTo(status)
+                .ifPresent(Action::apply);
 
     }
 
@@ -45,14 +55,16 @@ public class Demo {
         Warranty sensorWarranty = new TimeLimitedWarranty(sellingDate, Duration.ofDays(90));
         Article item1 = new Article(moneyback1, warranty1).install(sensor, sensorWarranty);
 
-        this.claimWarranty(item1, OperationalStatus.allFine(), Optional.empty());
-        this.claimWarranty(item1, OperationalStatus.visiblyDamaged(), Optional.empty());
-        this.claimWarranty(item1, OperationalStatus.notOperational(), Optional.empty());
-        this.claimWarranty(item1, OperationalStatus.notOperational().andVisiblyDamaged(), Optional.empty());
+        Supplier<ClaimingRulesBuilder> builderFactory = () -> new ExhaustiveRulesBuilder();
+
+        this.claimWarranty(builderFactory, item1, DeviceStatus.allFine());
+        this.claimWarranty(builderFactory, item1, DeviceStatus.visiblyDamaged());
+        this.claimWarranty(builderFactory, item1, DeviceStatus.notOperational());
+        this.claimWarranty(builderFactory, item1, DeviceStatus.notOperational().andVisiblyDamaged());
 
         LocalDate sensorExamined = LocalDate.now().minus(2, ChronoUnit.DAYS);
-        this.claimWarranty(item1, OperationalStatus.sensorFailed(), Optional.of(sensorExamined));
-        this.claimWarranty(item1, OperationalStatus.notOperational().andSensorFailed(), Optional.of(sensorExamined));
+        this.claimWarranty(builderFactory, item1, DeviceStatus.sensorFailed(sensorExamined));
+        this.claimWarranty(builderFactory, item1, DeviceStatus.notOperational().andSensorFailed(sensorExamined));
 
 
     }
