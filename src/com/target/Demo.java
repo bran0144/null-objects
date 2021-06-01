@@ -13,13 +13,26 @@ public class Demo {
     public void offerSensorRepair() {
         System.out.println("Offer sensor replacement.");
     }
-    public void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
+   private void claimWarranty(Article article, DeviceStatus status, Optional<LocalDate> sensorFailureDate) {
         LocalDate today = LocalDate.now();
 
-        StatusEqualityRule.match(
+        ClaimingRule rules = StatusEqualityRule.match(
                     DeviceStatus.allFine(),
                     () -> this.claimMoneyBack(article, today))
-                .applicableTo(status)
+                .orElse(StatusEqualityRule.match(
+                        DeviceStatus.notOperational(),
+                        () -> {
+                            this.claimMoneyBack(article, today);
+                            this.claimExpress(article, today);
+                    }))
+                .orElse(StatusEqualityRule.match(
+                        DeviceStatus.visiblyDamaged(),
+                        () -> {}));
+                .orElse(StatusEqualityRule.match(
+               DeviceStatus.sensorFailed(),
+               () -> {}));
+
+        rules.applicableTo(status)
                 .ifPresent(action -> action.apply());
 
 
