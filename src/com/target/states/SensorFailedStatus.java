@@ -12,6 +12,7 @@ public class SensorFailedStatus extends DeviceStatus{
     public LocalDate getFailureDetectedDate() {
         return this.failureDetectedOn;
     }
+
     @Override
     public DeviceStatus andNotOperational() {
         return super.andNotOperational().andSensorFailed(this.failureDetectedOn);

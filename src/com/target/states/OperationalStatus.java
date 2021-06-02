@@ -1,14 +1,13 @@
 package com.target.states;
 
 public class OperationalStatus {
+    private final int representation;
     public static OperationalStatus allFine() { return new OperationalStatus(0);}
     public static OperationalStatus notOperational() {return new OperationalStatus(1);}
     public static OperationalStatus visiblyDamaged() {return new OperationalStatus(2);}
     public static OperationalStatus sensorFailed() {return new OperationalStatus(4);}
 
-    private final int representation;
-
-    private OperationalStatus(int represenation) {this.representation = represenation;}
+    private OperationalStatus(int representation) {this.representation = representation;}
 
     public OperationalStatus andNotOperational() {return this.add(notOperational());}
     public OperationalStatus andVisiblyDamaged() {return this.add(visiblyDamaged());}
@@ -17,13 +16,12 @@ public class OperationalStatus {
     public OperationalStatus add(OperationalStatus status) {
         return new OperationalStatus(this.representation | status.representation);
     }
-    private boolean isSupersetOf(OperationalStatus other) {
+    public boolean isSupersetOf(OperationalStatus other) {
         return (this.representation & other.representation) == other.representation;
     }
     @Override
-
     public boolean equals(Object other) {
-        return other instanceof OperationalStatus && this.equals((OperationalStatus) other);
+        return other instanceof OperationalStatus && this.equals((OperationalStatus)other);
     }
     private boolean equals(OperationalStatus other) {
         return this.representation == other.representation;
@@ -45,7 +43,7 @@ public class OperationalStatus {
             separator = " + ";
         }
         if (this.isSupersetOf(sensorFailed())){
-            result += separator + "Sensfor failed";
+            result += separator + "Sensor failed";
             separator = " + ";
         }
         return result;

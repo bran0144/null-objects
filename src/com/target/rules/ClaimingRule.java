@@ -11,4 +11,5 @@ public interface ClaimingRule {
     default ClaimingRule orElse(ClaimingRule next) {
         return new ChainedRule(this, next);
     }
+    default ClaimingRule with(ClaimingRule other) {return new WithRule(this, other);}
 }

@@ -1,14 +1,12 @@
 package com.target;
 
-import com.target.rules.ClaimingRule;
+
 import com.target.rules.ExhaustiveRulesBuilder;
 import com.target.states.DeviceStatus;
-import com.target.states.OperationalStatus;
 
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class Demo {
@@ -22,7 +20,7 @@ public class Demo {
         System.out.println("Offer sensor replacement.");
     }
 
-   private void claimWarranty(Supplier<ClaimingRulesBuilder> rulesBuilderFactory, Article article, OperationalStatus status) {
+   private void claimWarranty(Supplier<ClaimingRulesBuilder> rulesBuilderFactory, Article article, DeviceStatus status) {
         LocalDate today = LocalDate.now();
 
         rulesBuilderFactory.get()
@@ -32,7 +30,6 @@ public class Demo {
                 .build()
                 .applicableTo(status)
                 .ifPresent(Action::apply);
-
     }
 
     private void claimExtended(Article article, LocalDate today, LocalDate sensorFailureDate) {

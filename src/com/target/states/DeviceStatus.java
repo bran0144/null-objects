@@ -36,6 +36,12 @@ public class DeviceStatus {
                 ? Optional.of(this)
                 : Optional.empty();
     }
+
+    public Optional<DeviceStatus> isSupersetOf(OperationalStatus pattern) {
+        return this.state.isSupersetOf(pattern)
+                ? Optional.of(this)
+                : Optional.empty();
+    }
     @Override
     public String toString() {return this.state.toString();}
 }
